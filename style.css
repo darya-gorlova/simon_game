@@ -1,0 +1,73 @@
+html {
+  box-sizing: border-box;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/*****audio ******/
+.hidden {
+  display: none !important;
+}
+/*****end audio******/
+
+/******************tiles*********************************/
+.tile-container {
+  display: grid;
+  grid-template-rows: 10rem 10rem;
+  grid-template-columns: 10rem 10rem;
+  grid-gap: 1rem;
+  margin: 2rem 0;
+}
+.tile {
+  box-shadow: 0 0 0 1px lightgrey inset, 0 0 0 2px rgb(255 255 255 / 15%) inset,
+    0 8px 0 0 lightgrey, 0 8px 0 1px rgb(0 0 0 / 40%),
+    0 8px 8px 1px rgb(0 0 0 / 50%);
+  transition: 0.5s;
+}
+.tile:hover,
+.activated {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 1px grey inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset,
+    0 10px 0 0 grey, 0 10px 0 1px rgba(0, 0, 0, 0.4),
+    0 10px 8px 1px rgba(0, 0, 0, 0.6);
+}
+
+/******tiles colors*********************/
+.tile-red {
+  background-color: red;
+}
+.tile-green {
+  background-color: green;
+}
+.tile-blue {
+  background-color: blue;
+}
+.tile-yellow {
+  background-color: yellow;
+}
+
+.tile-red.activated {
+  background-color: darkred;
+}
+.tile-green.activated {
+  background-color: darkgreen;
+}
+.tile-blue.activated {
+  background-color: darkblue;
+}
+.tile-yellow.activated {
+  background-color: darkgoldenrod;
+}
+/******end tiles colors*********************/
+
+/******************end tiles*********************************/
