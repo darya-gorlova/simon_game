@@ -40,7 +40,7 @@ class UI {
     tile.innerHTML = `<span>${color}</span>`;
     setTimeout(() => {
       tile.classList.remove("activated");
-    }, 600);
+    }, 1000);
   }
   activateTiles() {
     _tiles.forEach((tile) => {
@@ -62,17 +62,16 @@ const ui = new UI();
 function startGame() {
   _button.style.display = "none";
   ui.deactivateTiles();
-  computerPlays();
+  computerPlays().then(ui.activateTiles());
 }
-function computerPlays() {
+async function computerPlays() {
   updateMessage("Computer plays");
   for (let i = 0; i < level; i++) {
     model.saveComputerMove();
     ui.pressTile(computerSequence[i]);
   }
   model.increaseLevel();
-  //ui.activateTiles();
-   console.log(level);
+   //console.log(level);
 }
 
 function humanPlays(tile) {
@@ -89,12 +88,7 @@ function executeRound(sequence){
 function updateMessage(message) {
   _message.textContent = message;
 }
-/*_button.addEventListener("click", () => {
-  startGame().then(function() {
-    ui.activateTiles();
-  });
 
-});*/
 _button.addEventListener("click", startGame);
 
 _tile_container.addEventListener("click", (event) => {
