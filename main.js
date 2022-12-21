@@ -16,9 +16,9 @@ class Model {
 
   saveComputerMove() {
     const tile = this.getRandomTile();
+    console.log("random tile created: " + tile);
     computerSequence.push(tile);
     console.log(computerSequence);
-    // console.log(level);
   }
 
   saveHumanMove(tile) {
@@ -35,7 +35,7 @@ class UI {
     return new Promise((resolve) => {
       setTimeout(() => {
         tile.classList.remove("activated");
-        resolve(color + " is pressed");
+        resolve(color + " tile bound successfully");
       }, 2000);
     });
   }
@@ -59,40 +59,38 @@ async function startGame() {
   ui.deactivateTiles();
   await computerPlays();
   ui.activateTiles();
-  updateMessage("Your turn");
 }
 
-function resetGame(text){
+function resetGame(text) {
   computerSequence = [];
   humanSequence = [];
   level = 1;
   updateMessage(text);
+  ui.deactivateTiles();
   _button.style.display = "block";
-  //computerPlays();
 }
 
 async function moveToNextLevel() {
   level += 1;
-  updateMessage("Congratulations! You passed to the next level: " + level);
+  //updateMessage("Congratulations! You passed to the next level: " + level);
   humanSequence = [];
-  console.log(level);
-  return new Promise((resolve) => {
-    setTimeout(() => {computerPlays(); resolve();
-    }, 3000);
-  });
+  console.log("moved to next level: " + level);
+  startGame();
+  
 }
 
 async function computerPlays() {
-  updateMessage("Computer plays");
+  updateMessage("Computer plays...");
+  model.saveComputerMove();
   for (let i = 0; i < level; i++) {
-    model.saveComputerMove();
     let pressed = await ui.pressTile(computerSequence[i]);
     console.log("computer: " + pressed);
   }
+  updateMessage("Your Turn...");
 }
 
 async function humanPlays(tile) {
-  console.log(tile);
+  console.log("human pressed: " + tile);
   model.saveHumanMove(tile);
   let pressed = await ui.pressTile(tile);
   console.log("human: " + pressed);
@@ -106,6 +104,7 @@ function evaluateMove() {
       return;
     }
   }
+  moveToNextLevel();
 }
 
 function updateMessage(message) {
