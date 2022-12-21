@@ -1,5 +1,5 @@
-let computerMoves = [];
-let humanMoves = [];
+let computerSequence = [];
+let humanSequence = [];
 let level = 1; // up to 20
 
 const _button = document.querySelector(".button");
@@ -11,19 +11,19 @@ class Model {
   getRandomTile() {
     const tiles = ["red", "green", "blue", "yellow"];
     const random = tiles[Math.floor(Math.random() * tiles.length)];
-    console.log(random);
+    //console.log(random);
     return random;
   }
 
-  saveComputerMoves() {
+  saveComputerMove() {
     const tile = this.getRandomTile();
-    computerMoves.push(tile);
-    console.log(computerMoves);
+    computerSequence.push(tile);
+    console.log(computerSequence);
     // console.log(level);
   }
 
-  saveHumanMoves(tile) {
-    humanMoves.push(tile);
+  saveHumanMove(tile) {
+    humanSequence.push(tile);
   }
 
   increaseLevel() {
@@ -40,7 +40,7 @@ class UI {
     tile.innerHTML = `<span>${color}</span>`;
     setTimeout(() => {
       tile.classList.remove("activated");
-    }, 300);
+    }, 600);
   }
   activateTiles() {
     _tiles.forEach((tile) => {
@@ -48,17 +48,10 @@ class UI {
       //console.log(tiles);
     });
   }
-  disactivateTiles() {
+  deactivateTiles() {
     _tiles.forEach((tile) => {
       tile.style.pointerEvents = "none";
       //console.log(tiles);
-    });
-  }
-  displayMove(playerMoves) {
-    playerMoves.forEach((tile, index) => {
-      setTimeout(() => {
-        this.pressTile(tile);
-      }, (index + 1) * 600);
     });
   }
 }
@@ -68,25 +61,29 @@ const ui = new UI();
 
 function startGame() {
   _button.style.display = "none";
-  ui.disactivateTiles();
+  ui.deactivateTiles();
   computerPlays();
 }
 function computerPlays() {
   updateMessage("Computer plays");
   for (let i = 0; i < level; i++) {
-    model.saveComputerMoves();
-    ui.displayMove(computerMoves);
+    model.saveComputerMove();
+    ui.pressTile(computerSequence[i]);
   }
   model.increaseLevel();
   //ui.activateTiles();
-  //console.log(level);
+   console.log(level);
 }
 
 function humanPlays(tile) {
   updateMessage("Your turn");
-  model.saveHumanMoves(tile);
-  console.log(humanMoves);
-  ui.displayMove(humanMoves);
+  /*model.saveHumanMove(tile);
+  console.log(humanSequence);
+  ui.pressTile(humanSequence[i]);*/
+}
+
+function executeRound(sequence){
+  
 }
 
 function updateMessage(message) {
