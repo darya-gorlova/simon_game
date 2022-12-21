@@ -36,7 +36,7 @@ class UI {
       setTimeout(() => {
         tile.classList.remove("activated");
         resolve(color + " tile bound successfully");
-      }, 2000);
+      }, 1000);
     });
   }
   activateTiles() {
@@ -70,15 +70,6 @@ function resetGame(text) {
   _button.style.display = "block";
 }
 
-async function moveToNextLevel() {
-  level += 1;
-  //updateMessage("Congratulations! You passed to the next level: " + level);
-  humanSequence = [];
-  console.log("moved to next level: " + level);
-  startGame();
-  
-}
-
 async function computerPlays() {
   updateMessage("Computer plays...");
   model.saveComputerMove();
@@ -98,13 +89,25 @@ async function humanPlays(tile) {
 }
 
 function evaluateMove() {
+  console.log(computerSequence);
+  console.log(humanSequence);
   for (let i = 0; i < level; i++) {
     if (computerSequence[i] !== humanSequence[i]) {
       resetGame("You pressed wrong tile, game is over");
+
       return;
     }
   }
   moveToNextLevel();
+}
+function moveToNextLevel() {
+  level += 1;
+  updateMessage("Congratulations! You passed to the next level: " + level);
+  humanSequence = [];
+  console.log("moved to next level: " + level);
+  setTimeout(() => {
+    startGame();
+  }, 10000);
 }
 
 function updateMessage(message) {
