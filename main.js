@@ -118,3 +118,5 @@ _tile_container.addEventListener("click", (event) => {
   const { tile } = event.target.dataset;
   if (tile) humanPlays(tile);
 });
+
+//last version
