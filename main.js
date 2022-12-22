@@ -40,7 +40,7 @@ class UI {
       setTimeout(() => {
         tile.classList.remove("activated");
         resolve(color + " tile bound successfully");
-      }, 200);
+      }, 1000);
     });
   }
   activateTiles() {
@@ -73,11 +73,10 @@ function resetGame(text) {
 }
 
 async function computerPlays() {
-  await updateMessage("Computer plays...");
+  updateMessage("Computer plays...");
   model.saveComputerMove();
   for (let i = 0; i < level; i++) {
     await ui.pressTile(computerSequence[i]);
-    await delay(700);
   }
   updateMessage("Your Turn...");
   ui.activateTiles();
@@ -100,21 +99,17 @@ function evaluateMove(index) {
     return;
   }
 }
-async function moveToNextLevel(text) {
+function moveToNextLevel(text) {
   level += 1;
-  await updateMessage(text + level);
+  updateMessage(text + level);
   humanSequence = [];
   setTimeout(() => {
     startGame();
-  }, 2000);
+  }, 4000);
 }
 
-async function updateMessage(message) {
+function updateMessage(message) {
   _message.textContent = message;
-  await delay(1000);
-}
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 _button.addEventListener("click", startGame);
