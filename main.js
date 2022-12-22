@@ -21,6 +21,7 @@ class Model {
     console.log(computerSequence);
   }
 
+  //return index at which tile is saved
   saveHumanMove(tile) {
     const length = humanSequence.push(tile);
     console.log("human");
@@ -57,11 +58,10 @@ class UI {
 const model = new Model();
 const ui = new UI();
 
-async function startGame() {
+function startGame() {
   _button.style.display = "none";
   ui.deactivateTiles();
-  await computerPlays();
-  ui.activateTiles();
+  computerPlays();
 }
 
 function resetGame(text) {
@@ -69,7 +69,6 @@ function resetGame(text) {
   humanSequence = [];
   level = 1;
   updateMessage(text);
-  ui.deactivateTiles();
   _button.style.display = "block";
 }
 
@@ -77,37 +76,36 @@ async function computerPlays() {
   updateMessage("Computer plays...");
   model.saveComputerMove();
   for (let i = 0; i < level; i++) {
-    let pressed = await ui.pressTile(computerSequence[i]);
-    //console.log("computer: " + pressed);
+    await ui.pressTile(computerSequence[i]);
   }
   updateMessage("Your Turn...");
+  ui.activateTiles();
 }
 
-async function humanPlays(tile) {
+function humanPlays(tile) {
   const atIndex = model.saveHumanMove(tile);
-  let pressed = await ui.pressTile(tile);
-  //console.log("human: " + pressed);
+  ui.pressTile(tile);
   evaluateMove(atIndex);
 }
-
 function evaluateMove(index) {
   if (computerSequence[index] !== humanSequence[index]) {
     resetGame("You pressed wrong tile, game is over");
+    ui.deactivateTiles();
     return;
   }
   if (computerSequence.length === humanSequence.length) {
     moveToNextLevel("Congratulations! You passed to the next level: ");
+    ui.deactivateTiles();
     return;
   }
 }
 function moveToNextLevel(text) {
   level += 1;
   updateMessage(text + level);
-  console.log("moved to next level: " + level);
   humanSequence = [];
   setTimeout(() => {
     startGame();
-  }, 5000);
+  }, 4000);
 }
 
 function updateMessage(message) {

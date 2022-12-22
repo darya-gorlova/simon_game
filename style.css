@@ -1,5 +1,6 @@
 html {
   box-sizing: border-box;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 body {
   display: flex;
@@ -7,11 +8,20 @@ body {
   align-items: center;
   height: 100vh;
 }
+.button {
+  width: 100px;
+  font-size: large;
+}
 main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.message {
+  font-weight: 800;
+  font-size: xx-large;
 }
 
 /*****audio ******/
@@ -33,7 +43,7 @@ main {
   box-shadow: 0 0 0 1px lightgrey inset, 0 0 0 2px rgb(255 255 255 / 15%) inset,
     0 8px 0 0 lightgrey, 0 8px 0 1px rgb(0 0 0 / 40%),
     0 8px 8px 1px rgb(0 0 0 / 50%);
-  transition: 0.5s;
+  transition: 1s;
 }
 .tile:hover,
 .activated {
