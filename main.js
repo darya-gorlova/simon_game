@@ -1,6 +1,6 @@
 let computerSequence = [];
 let humanSequence = [];
-let level = 1; // up to 20
+let level = 1;
 
 const _button = document.querySelector(".button");
 const _message = document.querySelector(".message");
@@ -16,13 +16,16 @@ class Model {
 
   saveComputerMove() {
     const tile = this.getRandomTile();
-    console.log("random tile created: " + tile);
     computerSequence.push(tile);
+    console.log("computer");
     console.log(computerSequence);
   }
 
   saveHumanMove(tile) {
-    humanSequence.push(tile);
+    const length = humanSequence.push(tile);
+    console.log("human");
+    console.log(humanSequence);
+    return length - 1;
   }
 }
 
@@ -75,39 +78,36 @@ async function computerPlays() {
   model.saveComputerMove();
   for (let i = 0; i < level; i++) {
     let pressed = await ui.pressTile(computerSequence[i]);
-    console.log("computer: " + pressed);
+    //console.log("computer: " + pressed);
   }
   updateMessage("Your Turn...");
 }
 
 async function humanPlays(tile) {
-  console.log("human pressed: " + tile);
-  model.saveHumanMove(tile);
+  const atIndex = model.saveHumanMove(tile);
   let pressed = await ui.pressTile(tile);
-  console.log("human: " + pressed);
-  evaluateMove();
+  //console.log("human: " + pressed);
+  evaluateMove(atIndex);
 }
 
-function evaluateMove() {
-  console.log(computerSequence);
-  console.log(humanSequence);
-  for (let i = 0; i < level; i++) {
-    if (computerSequence[i] !== humanSequence[i]) {
-      resetGame("You pressed wrong tile, game is over");
-
-      return;
-    }
+function evaluateMove(index) {
+  if (computerSequence[index] !== humanSequence[index]) {
+    resetGame("You pressed wrong tile, game is over");
+    return;
   }
-  moveToNextLevel();
+  if (computerSequence.length === humanSequence.length) {
+    moveToNextLevel("Congratulations! You passed to the next level: ");
+    return;
+  }
 }
-function moveToNextLevel() {
+function moveToNextLevel(text) {
   level += 1;
-  updateMessage("Congratulations! You passed to the next level: " + level);
-  humanSequence = [];
+  updateMessage(text + level);
   console.log("moved to next level: " + level);
+  humanSequence = [];
   setTimeout(() => {
     startGame();
-  }, 10000);
+  }, 5000);
 }
 
 function updateMessage(message) {
