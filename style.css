@@ -1,6 +1,7 @@
 html {
   box-sizing: border-box;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 body {
   display: flex;
@@ -31,6 +32,7 @@ main {
 /*****end audio******/
 
 /******************tiles*********************************/
+
 .tile-container {
   display: grid;
   grid-template-rows: 10rem 10rem;
@@ -66,18 +68,8 @@ main {
 .tile-yellow {
   background-color: yellow;
 }
-
-.tile-red.activated {
-  background-color: darkred;
-}
-.tile-green.activated {
-  background-color: darkgreen;
-}
-.tile-blue.activated {
-  background-color: darkblue;
-}
-.tile-yellow.activated {
-  background-color: darkgoldenrod;
+.activated {
+  background-color: black;
 }
 /******end tiles colors*********************/
 
