@@ -1,13 +1,29 @@
-let computerSequence = [];
-let humanSequence = [];
-let level = 1;
-
-const _button = document.querySelector(".button");
-const _message = document.querySelector(".message");
-const _tile_container = document.querySelector(".tile-container");
-const _tiles = [..._tile_container.children];
-
 class Model {
+  //private fields
+  #computerSequence = [];
+  #humanSequence = [];
+  #level = 1;
+
+  //getters and setters
+  get computerSequence() {
+    return this.#computerSequence;
+  }
+  get humanSequence() {
+    return this.#humanSequence;
+  }
+  get level() {
+    return this.#level;
+  }
+  set computerSequence(value) {
+    this.#computerSequence = value;
+  }
+  set humanSequence(value) {
+    this.#humanSequence = value;
+  }
+  set level(value) {
+    this.#level = value;
+  }
+
   getRandomTile() {
     const tiles = ["red", "green", "blue", "yellow"];
     const random = tiles[Math.floor(Math.random() * tiles.length)];
@@ -16,21 +32,38 @@ class Model {
 
   saveComputerMove() {
     const tile = this.getRandomTile();
-    computerSequence.push(tile);
+    this.#computerSequence.push(tile);
     console.log("computer");
-    console.log(computerSequence);
+    console.log(this.#computerSequence);
   }
 
-  //return index at which tile is saved
+  //return index of saved tile
   saveHumanMove(tile) {
-    const length = humanSequence.push(tile);
+    const length = this.#humanSequence.push(tile);
     console.log("human");
-    console.log(humanSequence);
+    console.log(this.#humanSequence);
     return length - 1;
+  }
+
+  wrongTile(index) {
+    while (this.#computerSequence[index] !== this.#humanSequence[index]) {
+      return true;
+    }
+  }
+  humanSequenceHasCorrectLength() {
+    while (this.#computerSequence.length === this.#humanSequence.length) {
+      return true;
+    }
   }
 }
 
 class UI {
+  //private fields
+  #button = document.querySelector(".button");
+  #tile_container = document.querySelector(".tile-container");
+  #tiles = [...this.#tile_container.children];
+  #message = document.querySelector(".message");
+
   async pressTile(color) {
     const tile = document.querySelector(`[data-tile='${color}']`);
     const sound = document.querySelector(`[data-sound='${color}']`);
@@ -44,84 +77,119 @@ class UI {
     });
   }
   activateTiles() {
-    _tiles.forEach((tile) => {
+    this.#tiles.forEach((tile) => {
       tile.style.pointerEvents = "auto";
     });
   }
   deactivateTiles() {
-    _tiles.forEach((tile) => {
+    this.#tiles.forEach((tile) => {
       tile.style.pointerEvents = "none";
+    });
+  }
+  activateStartBtn() {
+    this.#button.style.display = "block";
+  }
+  deactivateStartBtn() {
+    this.#button.style.display = "none";
+  }
+  displayMessage(text) {
+    this.#message.textContent = text;
+  }
+  //In an event, this refers to the element that received the event. Thats why callback was bound with correct this (see 185)
+  registerListenerOnStartBtn(startGame) {
+    this.#button.addEventListener("click", startGame);
+  }
+  registerListenerOnTiles(humanPlays) {
+    this.#tile_container.addEventListener("click", (event) => {
+      const { tile } = event.target.dataset;
+      if (tile) humanPlays(tile);
     });
   }
 }
 
-const model = new Model();
-const ui = new UI();
+class Controller {
+  //private fields
+  #model;
+  #ui;
 
-function startGame() {
-  _button.style.display = "none";
-  ui.deactivateTiles();
-  computerPlays();
-}
-
-function resetGame(text) {
-  computerSequence = [];
-  humanSequence = [];
-  level = 1;
-  updateMessage(text);
-  _button.style.display = "block";
-}
-
-async function computerPlays() {
-  await updateMessage("Computer plays...");
-  model.saveComputerMove();
-  for (let i = 0; i < level; i++) {
-    await ui.pressTile(computerSequence[i]);
-    await delay(700);
+  constructor(mod, view) {
+    this.#model = mod;
+    this.#ui = view;
   }
-  updateMessage("Your Turn...");
-  ui.activateTiles();
-}
 
-function humanPlays(tile) {
-  const atIndex = model.saveHumanMove(tile);
-  ui.pressTile(tile);
-  evaluateMove(atIndex);
-}
-
-function evaluateMove(index) {
-  if (computerSequence[index] !== humanSequence[index]) {
-    resetGame("You pressed wrong tile, game is over");
-    ui.deactivateTiles();
-    return;
+  #startGame() {
+    this.#ui.deactivateStartBtn();
+    this.#ui.deactivateTiles();
+    controller.#computerPlays();
   }
-  if (computerSequence.length === humanSequence.length) {
-    moveToNextLevel("Congratulations! You passed to the next level: ");
-    ui.deactivateTiles();
-    return;
+
+  #resetGame(text) {
+    this.#model.computerSequence = [];
+    this.#model.humanSequence = [];
+    this.#model.level = 0;
+    controller.#updateMessage(text);
+    this.#ui.activateStartBtn();
+  }
+
+  async #computerPlays() {
+    await controller.#updateMessage("Computer plays...");
+    this.#model.saveComputerMove();
+    for (let i = 0; i < this.#model.level; i++) {
+      await this.#ui.pressTile(this.#model.computerSequence[i]);
+      await controller.#delay(700);
+    }
+    controller.#updateMessage("Your Turn...");
+    this.#ui.activateTiles();
+  }
+
+  #humanPlays(tile) {
+    const atIndex = this.#model.saveHumanMove(tile);
+    this.#ui.pressTile(tile);
+    controller.#evaluateMove(atIndex);
+  }
+
+  #evaluateMove(atIndex) {
+    if (this.#model.wrongTile(atIndex)) {
+      controller.#resetGame("You pressed wrong tile, game is over");
+      this.#ui.deactivateTiles();
+      return;
+    }
+    if (this.#model.humanSequenceHasCorrectLength()) {
+      controller.#moveToNextLevel(
+        "Congratulations! You passed to the next level: "
+      );
+      this.#ui.deactivateTiles();
+      return;
+    }
+  }
+
+  async #moveToNextLevel(text) {
+    this.#model.level = ++this.#model.level;
+    this.#model.humanSequence = [];
+    await controller.#updateMessage(text + this.#model.level);
+    await controller.#delay(2000);
+    controller.#startGame();
+  }
+
+  async #updateMessage(message) {
+    this.#ui.displayMessage(message);
+    await controller.#delay(1000);
+  }
+
+  async #delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
+  registerListeners() {
+    //pass with callbacks correct reference to this
+    this.#ui.registerListenerOnStartBtn(controller.#startGame.bind(this));
+    this.#ui.registerListenerOnTiles(controller.#humanPlays.bind(this));
   }
 }
 
-async function moveToNextLevel(text) {
-  level += 1;
-  humanSequence = [];
-  await updateMessage(text + level);
-  await delay(2000);
-  startGame();
-}
+const mod = new Model();
+const view = new UI();
 
-async function updateMessage(message) {
-  _message.textContent = message;
-  await delay(1000);
-}
-
-async function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
-
-_button.addEventListener("click", startGame);
-
-_tile_container.addEventListener("click", (event) => {
-  const { tile } = event.target.dataset;
-  if (tile) humanPlays(tile);
-});
+//dependency injection
+const controller = new Controller(mod, view);
+controller.registerListeners();
