@@ -109,12 +109,12 @@ class UI {
 
 class Controller {
   //private fields
-  #model;
+  #data;
   #ui;
 
-  constructor(mod, view) {
-    this.#model = mod;
-    this.#ui = view;
+  constructor(m, v) {
+    this.#data = m;
+    this.#ui = v;
   }
 
   #startGame() {
@@ -124,37 +124,37 @@ class Controller {
   }
 
   #resetGame(text) {
-    this.#model.computerSequence = [];
-    this.#model.humanSequence = [];
-    this.#model.level = 0;
+    this.#data.computerSequence = [];
+    this.#data.humanSequence = [];
+    this.#data.level = 0;
     controller.#updateMessage(text);
     this.#ui.activateStartBtn();
   }
 
   async #computerPlays() {
     await controller.#updateMessage("Computer plays...");
-    this.#model.saveComputerMove();
-    for (let i = 0; i < this.#model.level; i++) {
-      await this.#ui.pressTile(this.#model.computerSequence[i]);
+    this.#data.saveComputerMove();
+    for (let i = 0; i < this.#data.level; i++) {
+      await this.#ui.pressTile(this.#data.computerSequence[i]);
       await controller.#delay(700);
     }
     controller.#updateMessage("Your Turn...");
     this.#ui.activateTiles();
   }
 
-  #humanPlays(tile) {
-    const atIndex = this.#model.saveHumanMove(tile);
-    this.#ui.pressTile(tile);
+  async  #humanPlays(tile) {
+    const atIndex = this.#data.saveHumanMove(tile);
+    await this.#ui.pressTile(tile);
     controller.#evaluateMove(atIndex);
   }
 
   #evaluateMove(atIndex) {
-    if (this.#model.wrongTile(atIndex)) {
+    while (this.#data.wrongTile(atIndex)) {
       controller.#resetGame("You pressed wrong tile, game is over");
       this.#ui.deactivateTiles();
       return;
     }
-    if (this.#model.humanSequenceHasCorrectLength()) {
+    while (this.#data.humanSequenceHasCorrectLength()) {
       controller.#moveToNextLevel(
         "Congratulations! You passed to the next level: "
       );
@@ -164,9 +164,9 @@ class Controller {
   }
 
   async #moveToNextLevel(text) {
-    this.#model.level = ++this.#model.level;
-    this.#model.humanSequence = [];
-    await controller.#updateMessage(text + this.#model.level);
+    this.#data.level = ++this.#data.level;
+    this.#data.humanSequence = [];
+    await controller.#updateMessage(text + this.#data.level);
     await controller.#delay(2000);
     controller.#startGame();
   }
@@ -181,15 +181,15 @@ class Controller {
   }
 
   registerListeners() {
-    //pass with callbacks correct reference to this
+    //pass with callbacks correct reference to this 
     this.#ui.registerListenerOnStartBtn(controller.#startGame.bind(this));
     this.#ui.registerListenerOnTiles(controller.#humanPlays.bind(this));
   }
 }
 
-const mod = new Model();
+const model = new Model();
 const view = new UI();
 
 //dependency injection
-const controller = new Controller(mod, view);
+const controller = new Controller(model, view);
 controller.registerListeners();
