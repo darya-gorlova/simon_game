@@ -1,1 +1,1 @@
-# simon_game
+# Simon Says Game with HTML/CSS/JS
